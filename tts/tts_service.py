@@ -1,7 +1,4 @@
 import os
-from pathlib import Path
-import tempfile
-import requests
 from openai import AsyncOpenAI
 import logging
 

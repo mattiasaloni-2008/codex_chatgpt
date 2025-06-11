@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 import tempfile
 import requests
-from openai import OpenAI
+from openai import AsyncOpenAI
 import logging
 from dotenv import load_dotenv
 
@@ -22,7 +22,7 @@ class STTService:
         api_key = os.getenv('OPENAI_API_KEY')
         if not api_key:
             raise ValueError("OPENAI_API_KEY non trovata nelle variabili d'ambiente. Assicurati che il file .env sia nella directory root del progetto e contenga OPENAI_API_KEY=sk-...")
-        self.client = OpenAI(api_key=api_key)
+        self.client = AsyncOpenAI(api_key=api_key)
         logger.info("STTService inizializzato con successo")
     
     async def transcribe(self, audio_url: str) -> str:
@@ -77,12 +77,12 @@ class STTService:
         """
         try:
             with open(audio_file, "rb") as file:
-                response = self.client.audio.transcriptions.create(
+                response = await self.client.audio.transcriptions.create(
                     model="whisper-1",
                     file=file,
                     language=self.language
                 )
-                return response.text
+            return response.text
                 
         except Exception as e:
             logger.error(f"Errore durante la trascrizione con Whisper: {str(e)}")
