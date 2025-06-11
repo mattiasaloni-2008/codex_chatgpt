@@ -15,11 +15,4 @@ langchain-core>=0.3.58,<1.0.0
 langchain-openai>=0.3.16
 langchain-text-splitters>=0.3.8
 langchain-community>=0.0.20
-langsmith>=0.1.125,<0.4 
-echo "# codex_chatgpt" >> README.md
-git init
-git add README.md
-git commit -m "first commit"
-git branch -M main
-git remote add origin https://github.com/mattiasaloni-2008/codex_chatgpt.git
-git push -u origin main
+langsmith>=0.1.125,<0.4
