@@ -1,0 +1,37 @@
+# Configurazione del chatbot vocale
+stt:
+  provider: "openai_whisper"  # opzioni: openai_whisper, google_cloud, azure
+  model: "whisper-1"  # per OpenAI Whisper
+  language: "it"  # lingua di default
+
+tts:
+  provider: "openai"  # opzioni: openai, google_cloud, azure
+  voice: "alloy"  # voce di default per OpenAI
+  language: "it"  # lingua di default
+
+nlu:
+  provider: "openai"  # opzioni: openai, local_llm
+  model: "gpt-3.5-turbo"  # modello di default
+  temperature: 0.7
+  max_tokens: 150
+
+database:
+  type: "sqlite"  # opzioni: sqlite, postgresql
+  path: "data/chatbot.db"  # per SQLite
+  # Per PostgreSQL:
+  # host: "localhost"
+  # port: 5432
+  # database: "chatbot"
+  # user: "user"
+  # password: "password"
+
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "logs/chatbot.log"
+
+whatsapp:
+  provider: "twilio"
+  account_sid: ""  # da configurare
+  auth_token: ""   # da configurare
+  phone_number: "" # da configurare 

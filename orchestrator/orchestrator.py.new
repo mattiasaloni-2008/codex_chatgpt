@@ -1,0 +1,91 @@
+import logging
+from typing import Dict, Any, Optional
+from stt.stt_service import STTService
+from tts.tts_service import TTSService
+from nlu.nlu_service import NLUService
+import os
+import aiohttp
+import json
+from pathlib import Path
+from dotenv import load_dotenv
+
+logger = logging.getLogger(__name__)
+
+class Orchestrator:
+    def __init__(self, config: Dict[str, Any]):
+        self.config = config
+        self.stt = STTService(config)
+        self.tts = TTSService(config)
+        self.nlu = NLUService(config)
+    
+    async def process_audio_message(self, audio_url: str) -> bytes:
+        """
+        Processa un messaggio audio:
+        1. Converte l'audio in testo
+        2. Analizza il testo
+        3. Genera una risposta
+        4. Converte la risposta in audio
+        """
+        try:
+            # 1. Trascrivi l'audio in testo
+            text = await self.stt.transcribe(audio_url)
+            logger.info(f"Testo trascritto: {text}")
+            
+            # 2. Analizza il testo
+            analysis = await self.nlu.process(text)
+            logger.info(f"Analisi NLU: {analysis}")
+            
+            # 3. Genera una risposta
+            response_text = self._generate_response(analysis)
+            logger.info(f"Risposta generata: {response_text}")
+            
+            # 4. Converte la risposta in audio
+            audio_response = await self.tts.synthesize(response_text)
+            
+            return audio_response
+            
+        except Exception as e:
+            logger.error(f"Errore durante il processing del messaggio audio: {str(e)}")
+            raise
+    
+    async def process_text_message(self, text: str) -> bytes:
+        """
+        Processa un messaggio di testo:
+        1. Analizza il testo
+        2. Genera una risposta
+        3. Converte la risposta in audio
+        """
+        try:
+            # 1. Analizza il testo
+            analysis = await self.nlu.process(text)
+            logger.info(f"Analisi NLU: {analysis}")
+            
+            # 2. Genera una risposta
+            response_text = self._generate_response(analysis)
+            logger.info(f"Risposta generata: {response_text}")
+            
+            # 3. Converte la risposta in audio
+            audio_response = await self.tts.synthesize(response_text)
+            
+            return audio_response
+            
+        except Exception as e:
+            logger.error(f"Errore durante il processing del messaggio di testo: {str(e)}")
+            raise
+    
+    def _generate_response(self, analysis: Dict[str, Any]) -> str:
+        """
+        Genera una risposta basata sull'analisi NLU
+        """
+        intent = analysis.get('intent', 'unknown')
+        entities = analysis.get('entities', {})
+        
+        # Logica di risposta basata sull'intento
+        if intent == 'saluto':
+            return "Ciao! Come posso aiutarti?"
+        elif intent == 'domanda':
+            return "Mi dispiace, non ho ancora una risposta per questa domanda."
+        elif intent == 'richiesta_info':
+            return "Posso aiutarti a trovare informazioni su vari argomenti."
+        else:
+            return "Mi dispiace, non ho capito bene. Puoi ripetere?" 
