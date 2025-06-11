@@ -1,13 +1,8 @@
 import logging
-from typing import Dict, Any, Optional, List
+from typing import Dict, Any
 from stt.stt_service import STTService
 from tts.tts_service import TTSService
 from nlu.nlu_service import NLUService
-import os
-import aiohttp
-import json
-from pathlib import Path
-from dotenv import load_dotenv
 from knowledge.knowledge_base import knowledge_base, get_domande_prodotto
 import difflib
 
